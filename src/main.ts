@@ -1,3 +1,4 @@
+import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from 'nestjs-pino';
@@ -16,7 +17,12 @@ async function bootstrap() {
 
   app.getHttpAdapter().getInstance().disable('x-powered-by');
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api');
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
 
   const ENV = app.get(ENVService);
 
