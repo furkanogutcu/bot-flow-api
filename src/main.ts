@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { ENVService } from './modules/common/env/env.service';
@@ -10,6 +11,8 @@ async function bootstrap() {
   });
 
   app.enableShutdownHooks();
+
+  app.useLogger(app.get(Logger));
 
   app.getHttpAdapter().getInstance().disable('x-powered-by');
 
