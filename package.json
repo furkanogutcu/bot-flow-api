@@ -20,15 +20,16 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepare": "husky",
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production'){process.exit(1)} \" || husky install",
     "pre-commit": "npm run lint & npm run build:check",
     "pre-push": "npm run lint & npm run build:check",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "db:create": "ts-node ./database/scripts/create-db.script",
-    "db:migration:run": "npm run typeorm migration:run -- -d ./database/typeorm.data-source",
-    "db:migration:create": "npm run typeorm -- migration:create ./database/migrations/$npm_config_name",
-    "db:migration:generate": "npm run typeorm -- -d ./database/typeorm.data-source migration:generate ./database/migrations/$npm_config_name",
-    "db:migration:revert": "npm run typeorm -- -d ./database/typeorm.data-source migration:revert"
+    "db:create": "ts-node ./src/database/scripts/create-db.script",
+    "db:migration:run": "npm run typeorm migration:run -- -d dist/database/typeorm.data-source.js",
+    "db:migration:create": "npm run typeorm -- migration:create ./src/database/migrations/$npm_config_name",
+    "db:migration:generate": "npm run typeorm -- -d dist/database/typeorm.data-source.js migration:generate ./src/database/migrations/$npm_config_name",
+    "db:migration:revert": "npm run typeorm -- -d dist/database/typeorm.data-source.js migration:revert",
+    "db:migration:drop": "npm run typeorm -- -d dist/database/typeorm.data-source.js schema:drop"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
