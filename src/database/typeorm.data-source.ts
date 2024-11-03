@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+import { join } from 'path';
 import { DataSource } from 'typeorm';
 
 config();
@@ -6,8 +7,8 @@ config();
 export default new DataSource({
   type: 'postgres',
   url: process.env.DATABASE_URL,
-  entities: ['dist/src/modules/**/*.entity{.ts,.js}'],
-  migrations: ['dist/src/common/database/migrations/*.{ts,js}'],
-  subscribers: ['dist/src/modules/**/*.subscriber.{ts,js}'],
+  entities: [join(__dirname, '../modules/**/*.entity.{ts,js}')],
+  migrations: [join(__dirname, '../database/migrations/*.{ts,js}')],
+  subscribers: [join(__dirname, '../modules/**/*.subscriber.{ts,js}')],
   synchronize: false,
 });
