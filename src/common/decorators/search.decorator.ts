@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { FindOptionsWhere, Raw } from 'typeorm';
 
-import { IRequest } from '../../interfaces/express-request.interface';
 import { searchSchema } from '../../validations/common/search.validation';
+import { IRequest } from '../interfaces/express-request.interface';
 
 export type SearchParams<Entity> = FindOptionsWhere<Entity> | undefined;
 
