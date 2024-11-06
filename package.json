@@ -32,6 +32,7 @@
     "db:migration:drop": "npm run typeorm -- -d dist/database/typeorm.data-source.js schema:drop"
   },
   "dependencies": {
+    "@anatine/zod-nestjs": "^2.0.9",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.0",
