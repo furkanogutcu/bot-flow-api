@@ -27,13 +27,13 @@ export class TypeORMExceptionTransformer {
       23505: TypeORMExceptionTransformer.transformConflictError,
     };
 
-  private static transformEntityNotFoundError(exception: EntityNotFoundError) {
+  private static transformEntityNotFoundError(exception: EntityNotFoundError): AppNotFoundException {
     const match = exception.message.match(/"([^"]+)"/);
 
     return new AppNotFoundException({ resourceName: match?.[1] });
   }
 
-  private static transformConflictError(exception: QueryFailedError) {
+  private static transformConflictError(exception: QueryFailedError): AppConflictException | undefined {
     const detail: string | undefined = (exception as any)?.detail;
 
     if (!detail) return;
@@ -51,7 +51,7 @@ export class TypeORMExceptionTransformer {
     return new AppConflictException({ conflictedFields });
   }
 
-  private static transformNumericOverflowError(_exception: QueryFailedError) {
+  private static transformNumericOverflowError(_exception: QueryFailedError): AppUnprocessableEntityException {
     return new AppUnprocessableEntityException({
       message: 'Numeric field is outside the allowed range',
     });

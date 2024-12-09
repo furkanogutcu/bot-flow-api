@@ -24,20 +24,20 @@ export class AppValidationException extends AppException {
     return zodError.errors.flatMap((error): IValidationErrorDetail[] => {
       const type = this.detectDetailType(error);
 
-      const path = error.path.map((item) => item.toString());
+      const paths = error.path.map((item) => item.toString());
 
       if (error.code === ZodIssueCode.unrecognized_keys) {
         return error.keys.map((key) => ({
-          path: [...path, key],
           type: ValidationErrorType.Unrecognized,
+          path: [...paths, key].join('.'),
           message: 'This key is not recognized',
         }));
       }
 
       return [
         {
-          path,
           type,
+          path: paths.join('.'),
           message: error.message,
         },
       ];

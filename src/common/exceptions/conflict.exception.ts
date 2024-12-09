@@ -19,11 +19,11 @@ export class AppConflictException extends AppException {
     this.conflictedFields = conflictedFields;
   }
 
-  private static buildDetails(conflictedFields: string[]) {
+  private static buildDetails(conflictedFields: string[]): IValidationErrorDetail[] {
     return conflictedFields.map((field): IValidationErrorDetail => {
       return {
-        path: [field],
         type: ValidationErrorType.AlreadyExists,
+        path: field,
         message: `${field} already exists`,
       };
     });
