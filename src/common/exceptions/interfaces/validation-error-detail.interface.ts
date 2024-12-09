@@ -2,6 +2,6 @@ import { ValidationErrorType } from '../reference/validation-error-type.referenc
 
 export interface IValidationErrorDetail {
   type: ValidationErrorType;
-  path: string[];
+  path: string;
   message: string;
 }
