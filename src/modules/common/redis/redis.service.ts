@@ -15,7 +15,7 @@ export class RedisService implements OnApplicationShutdown {
     return this.redisClient;
   }
 
-  async onApplicationShutdown() {
+  async onApplicationShutdown(): Promise<void> {
     await this.redisClient.quit();
   }
 }
