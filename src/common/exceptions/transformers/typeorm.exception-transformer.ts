@@ -1,6 +1,6 @@
 import { EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
 
-import { joinColumnValues } from '../../references/join-column.reference';
+import { joinColumnKeyValues } from '../../references/join-column.reference';
 import { AppException } from '../app.exception';
 import { AppConflictException } from '../conflict.exception';
 import { AppNotFoundException } from '../not-found.exception';
@@ -45,7 +45,7 @@ export class TypeORMExceptionTransformer {
     if (matches && matches[1]) {
       const keys = matches[1].split(', ').map((key: string) => key.trim());
 
-      conflictedFields = keys.filter((key: any) => !joinColumnValues.includes(key));
+      conflictedFields = keys.filter((key: any) => !joinColumnKeyValues.includes(key));
     }
 
     return new AppConflictException({ conflictedFields });

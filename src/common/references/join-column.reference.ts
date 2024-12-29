@@ -1,3 +1,5 @@
-export enum JoinColumn {}
+export enum JoinColumnKey {
+  UserID = 'user_id',
+}
 
-export const joinColumnValues = Object.values(JoinColumn);
+export const joinColumnKeyValues = Object.values(JoinColumnKey);

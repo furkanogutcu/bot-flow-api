@@ -3,12 +3,13 @@ import './database/extensions';
 import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { Settings } from 'luxon';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { ENVService } from './modules/common/env/env.service';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
@@ -27,6 +28,8 @@ async function bootstrap() {
   });
 
   const ENV = app.get(ENVService);
+
+  Settings.defaultZone = 'utc';
 
   await app.listen(ENV.get('PORT'));
 }

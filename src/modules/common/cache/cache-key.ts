@@ -15,5 +15,13 @@ export class CacheKey {
     return keys.join(this.separator);
   }
 
-  private static keys = {};
+  private static keys = {
+    userEmailVerification: (token: string): string => {
+      return this.generateKey([this.scopes.users, 'email-verification', token]);
+    },
+
+    userPasswordReset: (token: string): string => {
+      return this.generateKey([this.scopes.users, 'password-resets', token]);
+    },
+  };
 }
