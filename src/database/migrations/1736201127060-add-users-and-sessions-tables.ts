@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateUsersAndSessionsTables1733903400067 implements MigrationInterface {
-  name = 'CreateUsersAndSessionsTables1733903400067';
+export class AddUsersAndSessionsTables1736201127060 implements MigrationInterface {
+  name = 'AddUsersAndSessionsTables1736201127060';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "sessions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "session_key" character varying NOT NULL, "refresh_token_hash" character varying NOT NULL, "device_info" character varying, "last_accessed_at" TIMESTAMP, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "revoked_at" TIMESTAMP, "user_id" uuid, CONSTRAINT "UQ_09302b75a4c95a402f588372cd6" UNIQUE ("session_key"), CONSTRAINT "PK_3238ef96f18b355b671619111bc" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sessions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "session_key" character varying NOT NULL, "refresh_token_hash" character varying NOT NULL, "user_agent" json, "ip_address" character varying, "last_accessed_at" TIMESTAMP, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "revoked_at" TIMESTAMP, "user_id" uuid NOT NULL, CONSTRAINT "UQ_09302b75a4c95a402f588372cd6" UNIQUE ("session_key"), CONSTRAINT "PK_3238ef96f18b355b671619111bc" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TYPE "public"."users_status_enum" AS ENUM('pending_email_verification', 'active', 'suspended')`,

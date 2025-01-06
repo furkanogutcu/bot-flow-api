@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DateTime } from 'luxon';
 import { DeepPartial, EntityManager, FindOneOptions, Repository } from 'typeorm';
 
-import { IRequest } from '../../common/interfaces/express-request.interface';
+import { IRequest, IUserAgent } from '../../common/interfaces/express-request.interface';
 import { User } from '../users/entities/user.entity';
 import { Session } from './entities/session.entity';
 
@@ -15,19 +15,19 @@ export class SessionsService {
     user,
     sessionKey,
     refreshToken,
-    deviceInfo,
+    userAgent,
     options,
   }: {
     user: User;
     sessionKey: string;
     refreshToken: string;
-    deviceInfo?: string;
+    userAgent?: IUserAgent;
     options?: { manager?: EntityManager };
   }): Promise<Session> {
     const session = this.createEntity({
       user,
       session_key: sessionKey,
-      device_info: deviceInfo,
+      user_agent: userAgent,
       refresh_token_hash: refreshToken,
       last_accessed_at: DateTime.now().toJSDate(),
     });
