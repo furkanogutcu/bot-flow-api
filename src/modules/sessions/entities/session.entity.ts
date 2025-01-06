@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { IUserAgent } from '../../../common/interfaces/express-request.interface';
 import { JoinColumnKey } from '../../../common/references/join-column.reference';
 import { User } from '../../users/entities/user.entity';
 
@@ -22,6 +23,7 @@ export class Session {
 
   @ManyToOne(() => User, (user) => user.sessions, {
     onDelete: 'CASCADE',
+    nullable: false,
   })
   @JoinColumn({ name: JoinColumnKey.UserID })
   user: User;
@@ -32,11 +34,14 @@ export class Session {
   @Column({ type: 'varchar' })
   refresh_token_hash: string;
 
+  @Column({ type: 'json', nullable: true })
+  user_agent?: IUserAgent | null;
+
   @Column({ type: 'varchar', nullable: true })
-  device_info: string | null;
+  ip_address?: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  last_accessed_at: Date | null;
+  last_accessed_at?: Date | null;
 
   @CreateDateColumn()
   created_at: Date;
@@ -45,7 +50,7 @@ export class Session {
   updated_at: Date;
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  revoked_at: Date | null;
+  revoked_at?: Date | null;
 
   @BeforeInsert()
   @BeforeUpdate()
