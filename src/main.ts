@@ -7,6 +7,7 @@ import { Settings } from 'luxon';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
+import { contextBuilder } from './common/middlewares/context-builder.middleware';
 import { ENVService } from './modules/common/env/env.service';
 
 async function bootstrap(): Promise<void> {
@@ -17,6 +18,7 @@ async function bootstrap(): Promise<void> {
   app.enableShutdownHooks();
 
   app.useLogger(app.get(Logger));
+  app.use(contextBuilder);
 
   app.getHttpAdapter().getInstance().disable('x-powered-by');
 

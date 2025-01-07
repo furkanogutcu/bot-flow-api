@@ -1,0 +1,66 @@
+<html>
+  <body>
+    <div
+      style='background-color:#F2F5F7;color:#242424;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+    >
+      <table
+        align='center'
+        width='100%'
+        style='margin:0 auto;max-width:600px;background-color:#FFFFFF'
+        role='presentation'
+        cellspacing='0'
+        cellpadding='0'
+        border='0'
+      >
+        <tbody>
+          <tr style='width:100%'>
+            <td>
+              <div style='font-weight:normal;padding:32px 24px 0px 24px'>
+                Hi
+                {{name}},
+              </div>
+              <div style='font-weight:normal;padding:8px 24px 0px 24px'>
+                <p>We detected an unrecognized login to your account. We are sending you this email to verify it's
+                  really you.</p>
+              </div>
+              <div style='color:#474849;font-size:14px;font-weight:normal;text-align:left;padding:0px 24px 0px 24px'>
+                <ul style='padding-left:20px;'>
+                  {{#if user_agent_device}}
+                    <li><strong>Device:</strong> {{user_agent_device}}</li>
+                  {{/if}}
+                  {{#if user_agent_os}}
+                    <li><strong>Operating System:</strong> {{user_agent_os}}</li>
+                  {{/if}}
+                  {{#if user_agent_browser}}
+                    <li><strong>Browser:</strong> {{user_agent_browser}}</li>
+                  {{/if}}
+                  <li><strong>Date & Time:</strong> {{datetime}}</li>
+                </ul>
+              </div>
+              <div style='text-align:left;padding:12px 24px 12px 24px'>
+                <a
+                  href='{{resolve_url}}'
+                  style='color:#FFFFFF;font-size:14px;font-weight:bold;background-color:#0068FF;border-radius:4px;display:inline-block;padding:12px 20px;text-decoration:none'
+                  target='_blank'
+                ><span>Yes, me</span></a>
+              </div>
+              <div style='color:#474849;font-size:14px;font-weight:normal;text-align:left;padding:8px 24px 16px 24px'>
+                If you don't recognize this login, we recommend updating your password immediately and enabling
+                two-factor authentication for enhanced security.
+              </div>
+              <div style='font-weight:normal;padding:0px 24px 16px 24px'>
+                <p>Best regards,<br />The Bot Flow Team</p>
+              </div>
+              <div style='padding:0px 24px 16px 24px'>
+                <hr style='width:100%;border:none;border-top:1px solid #EEEEEE;margin:0' />
+              </div>
+              <div style='color:#474849;font-size:12px;font-weight:normal;text-align:left;padding:0px 24px 24px 24px'>
+                Need help? Just reply to this email to contact support.
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

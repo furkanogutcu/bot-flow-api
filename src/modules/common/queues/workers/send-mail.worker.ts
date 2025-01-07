@@ -3,7 +3,7 @@ import { Job } from 'bullmq';
 
 import { AppQueue } from '../../../../common/references/queue.reference';
 import { MailService } from '../../mail/mail.service';
-import { ISendMailParams } from './interfaces/mail.interface';
+import { ISendMailParams } from './interfaces/send-mail.interface';
 
 @Processor(AppQueue.SendMail)
 export class SendMailWorker extends WorkerHost {

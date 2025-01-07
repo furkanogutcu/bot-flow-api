@@ -10,10 +10,11 @@ import { DatabaseModule } from './modules/common/database/database.module';
 import { ENVModule } from './modules/common/env/env.module';
 import { LoggerModule } from './modules/common/logger/logger.module';
 import { QueuesModule } from './modules/common/queues/queues.module';
+import { SuspiciousActivitiesModule } from './modules/suspicious-activity/suspicious-activities.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
-  imports: [ENVModule, LoggerModule, DatabaseModule, QueuesModule, AuthModule, UsersModule],
+  imports: [ENVModule, LoggerModule, DatabaseModule, QueuesModule, AuthModule, UsersModule, SuspiciousActivitiesModule],
   providers: [
     { provide: APP_PIPE, useClass: AppZodValidationPipe },
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
