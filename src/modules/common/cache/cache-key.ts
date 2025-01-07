@@ -17,7 +17,7 @@ export class CacheKey {
 
   private static keys = {
     userEmailVerification: (token: string): string => {
-      return this.generateKey([this.scopes.users, 'email-verification', token]);
+      return this.generateKey([this.scopes.users, 'email-verifications', token]);
     },
 
     userPasswordReset: (token: string): string => {
