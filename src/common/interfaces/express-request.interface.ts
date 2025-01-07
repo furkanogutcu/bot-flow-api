@@ -13,4 +13,9 @@ export interface IUserAgent {
 
 export interface IRequest extends Request {
   session: Pick<Session, 'id' | 'session_key' | 'user'>;
+  context: {
+    ipAddress: string;
+    userAgent: IUserAgent;
+    timestamp: number;
+  };
 }

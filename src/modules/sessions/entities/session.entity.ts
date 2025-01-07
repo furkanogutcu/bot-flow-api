@@ -8,12 +8,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { IUserAgent } from '../../../common/interfaces/express-request.interface';
 import { JoinColumnKey } from '../../../common/references/join-column.reference';
+import { SuspiciousActivity } from '../../suspicious-activity/entities/suspicious-activity.entity';
 import { User } from '../../users/entities/user.entity';
 
 @Entity({ name: 'sessions' })
@@ -27,6 +29,9 @@ export class Session {
   })
   @JoinColumn({ name: JoinColumnKey.UserID })
   user: User;
+
+  @OneToMany(() => SuspiciousActivity, (activity) => activity.session)
+  suspicious_activities: SuspiciousActivity[];
 
   @Column({ type: 'varchar', unique: true })
   session_key: string;

@@ -22,15 +22,15 @@ export class AuthController {
   @Public()
   @HttpCode(200)
   @Post('login')
-  async login(@Body() payload: LoginPayload): Promise<IJWTTokensResponse> {
-    return await this.authService.login(payload);
+  async login(@Req() req: IRequest, @Body() payload: LoginPayload): Promise<IJWTTokensResponse> {
+    return await this.authService.login(payload, req.context);
   }
 
   @Public()
   @HttpCode(200)
   @Post('register')
-  async register(@Body() payload: RegisterPayload): Promise<IJWTTokensResponse> {
-    return await this.authService.register(payload);
+  async register(@Req() req: IRequest, @Body() payload: RegisterPayload): Promise<IJWTTokensResponse> {
+    return await this.authService.register(payload, req.context);
   }
 
   @Public()

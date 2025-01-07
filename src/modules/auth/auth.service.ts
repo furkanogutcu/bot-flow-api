@@ -1,5 +1,7 @@
+import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import argon2 from 'argon2';
+import { Queue } from 'bullmq';
 import { randomBytes, randomUUID } from 'crypto';
 import { DateTime } from 'luxon';
 import ms from 'ms';
@@ -12,6 +14,7 @@ import { AppUnauthorizedException } from '../../common/exceptions/unauthorized.e
 import { IJWTTokensResponse } from '../../common/interfaces/auth.interface';
 import { IRequest } from '../../common/interfaces/express-request.interface';
 import { TokenType } from '../../common/references/auth.reference';
+import { AppQueue } from '../../common/references/queue.reference';
 import { UserRole } from '../../common/references/user-role.reference';
 import { UserStatus } from '../../common/references/user-status.reference';
 import { APIResponseOnlyMessage } from '../../common/responses/types/api-response.type';
@@ -20,6 +23,8 @@ import { CacheService } from '../common/cache/cache.service';
 import { CacheKey } from '../common/cache/cache-key';
 import { ENVService } from '../common/env/env.service';
 import { MailService } from '../common/mail/mail.service';
+import { IDetectUnrecognizedLoginParams } from '../common/queues/workers/interfaces/detect-unrecognized-login.interface';
+import { Session } from '../sessions/entities/session.entity';
 import { SessionsService } from '../sessions/sessions.service';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -35,6 +40,8 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly jwtService: JWTService,
     private readonly sessionsService: SessionsService,
+    @InjectQueue(AppQueue.DetectUnrecognizedLogin)
+    private readonly detectUnrecognizedLoginQueue: Queue<IDetectUnrecognizedLoginParams>,
   ) {}
 
   async verifyAccessToken(accessToken: string): Promise<IRequest['session']> {
@@ -53,13 +60,16 @@ export class AuthService {
     }
 
     if (session.user.deleted_at || session.user.status !== UserStatus.Active) {
-      throw new AppUnauthorizedException({ message: 'User not active', code: ExceptionCode.InactiveUser });
+      throw new AppUnauthorizedException({
+        message: 'User not active',
+        code: ExceptionCode.InactiveUser,
+      });
     }
 
     return session;
   }
 
-  async register(payload: RegisterPayload): Promise<IJWTTokensResponse> {
+  async register(payload: RegisterPayload, context: IRequest['context']): Promise<IJWTTokensResponse> {
     const isEmailAlreadyExists = await this.usersService.findOne({
       where: {
         email: ILike(payload.email),
@@ -81,13 +91,25 @@ export class AuthService {
 
       await this.sendWelcomeToEmail(user);
 
-      return await this.createSession(user, { manager });
+      const { accessToken, refreshToken } = await this.createSession({ user, context, options: { manager } });
+
+      return this.buildJWTTokensResponse(accessToken, refreshToken);
     });
   }
 
-  async login(payload: LoginPayload): Promise<IJWTTokensResponse> {
+  async login(payload: LoginPayload, context: IRequest['context']): Promise<IJWTTokensResponse> {
     const user = await this.usersService.findOne({
       where: { email: payload.email },
+      select: {
+        id: true,
+        email: true,
+        passwordHash: true,
+        role: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
+        deleted_at: true,
+      },
     });
 
     if (!user || !(await argon2.verify(user.passwordHash, payload.password))) {
@@ -97,7 +119,19 @@ export class AuthService {
       });
     }
 
-    return await this.createSession(user);
+    const { accessToken, refreshToken, session } = await this.createSession({ user, context });
+
+    await this.detectUnrecognizedLoginQueue.add('detect-unrecognized-login', {
+      userID: user.id,
+      sessionID: session.id,
+      request: {
+        ipAddress: context.ipAddress,
+        userAgent: context.userAgent,
+        timestamp: context.timestamp,
+      },
+    });
+
+    return this.buildJWTTokensResponse(accessToken, refreshToken);
   }
 
   async sendEmailVerificationEmail(email: string): Promise<APIResponseOnlyMessage> {
@@ -200,7 +234,9 @@ export class AuthService {
 
       await this.cacheService.del(cacheKey);
 
-      return { message: 'Your password has been successfully reset and all your sessions have been logged out.' };
+      return {
+        message: 'Your password has been successfully reset and all your sessions have been logged out.',
+      };
     });
   }
 
@@ -215,7 +251,9 @@ export class AuthService {
     });
 
     if (!session || !session.user || !(await argon2.verify(session.refresh_token_hash, refreshToken))) {
-      throw new AppUnauthorizedException({ message: 'Invalid refresh token' });
+      throw new AppUnauthorizedException({
+        message: 'Invalid refresh token',
+      });
     }
 
     // TODO: Session ile mevcut isteğin ip ve cihaz bilgisi valide edilebilir.
@@ -271,7 +309,11 @@ export class AuthService {
       user,
     });
 
-    await this.mailService.sendEmailVerification({ user, token, tokenDuration: duration });
+    await this.mailService.sendEmailVerification({
+      user,
+      token,
+      tokenDuration: duration,
+    });
   }
 
   private async createRandomToken({
@@ -333,17 +375,28 @@ export class AuthService {
     };
   }
 
-  private async createSession(user: User, options?: { manager?: EntityManager }): Promise<IJWTTokensResponse> {
+  private async createSession({
+    user,
+    context,
+    options,
+  }: {
+    user: User;
+    context: IRequest['context'];
+    options?: { manager?: EntityManager };
+  }): Promise<{ session: Session; accessToken: string; refreshToken: string }> {
     const { accessToken, refreshToken, sessionKey } = await this.createTokens(user);
 
-    // TODO: Device info eklenmeli
-    await this.sessionsService.create({
-      user,
-      sessionKey,
-      refreshToken,
+    const session = await this.sessionsService.create({
+      data: {
+        user,
+        session_key: sessionKey,
+        refreshToken,
+        ip_address: context.ipAddress,
+        user_agent: context.userAgent,
+      },
       options,
     });
 
-    return this.buildJWTTokensResponse(accessToken, refreshToken);
+    return { session, accessToken, refreshToken };
   }
 }

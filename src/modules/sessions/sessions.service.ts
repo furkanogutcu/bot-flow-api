@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DateTime } from 'luxon';
-import { DeepPartial, EntityManager, FindOneOptions, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
-import { IRequest, IUserAgent } from '../../common/interfaces/express-request.interface';
+import { IRequest } from '../../common/interfaces/express-request.interface';
 import { User } from '../users/entities/user.entity';
 import { Session } from './entities/session.entity';
 
@@ -12,23 +12,18 @@ export class SessionsService {
   constructor(@InjectRepository(Session) private readonly sessionsRepository: Repository<Session>) {}
 
   async create({
-    user,
-    sessionKey,
-    refreshToken,
-    userAgent,
+    data,
     options,
   }: {
-    user: User;
-    sessionKey: string;
-    refreshToken: string;
-    userAgent?: IUserAgent;
+    data: Pick<Session, 'user' | 'session_key' | 'user_agent' | 'ip_address'> & { refreshToken: string };
     options?: { manager?: EntityManager };
   }): Promise<Session> {
     const session = this.createEntity({
-      user,
-      session_key: sessionKey,
-      user_agent: userAgent,
-      refresh_token_hash: refreshToken,
+      user: data.user,
+      session_key: data.session_key,
+      user_agent: data.user_agent,
+      ip_address: data.ip_address,
+      refresh_token_hash: data.refreshToken,
       last_accessed_at: DateTime.now().toJSDate(),
     });
 
@@ -39,6 +34,10 @@ export class SessionsService {
 
   async findOne(options: FindOneOptions<Session>): Promise<Session | null> {
     return await this.sessionsRepository.findOne(options);
+  }
+
+  async list(options: FindManyOptions<Session>): Promise<Session[]> {
+    return await this.sessionsRepository.find(options);
   }
 
   async update(session: Session, options?: { manager?: EntityManager }): Promise<Session> {

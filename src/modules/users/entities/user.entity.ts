@@ -14,6 +14,7 @@ import {
 import { UserRole } from '../../../common/references/user-role.reference';
 import { UserStatus } from '../../../common/references/user-status.reference';
 import { Session } from '../../sessions/entities/session.entity';
+import { SuspiciousActivity } from '../../suspicious-activity/entities/suspicious-activity.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -22,6 +23,9 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
+
+  @OneToMany(() => SuspiciousActivity, (activity) => activity.user)
+  suspicious_activities: SuspiciousActivity[];
 
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;

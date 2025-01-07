@@ -2,11 +2,13 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Queue } from 'bullmq';
+import { DateTime } from 'luxon';
 
+import { IUserAgent } from '../../../common/interfaces/express-request.interface';
 import { AppQueue } from '../../../common/references/queue.reference';
 import { User } from '../../users/entities/user.entity';
 import { ENVService } from '../env/env.service';
-import { ISendMailParams } from '../queues/workers/interfaces/mail.interface';
+import { ISendMailParams } from '../queues/workers/interfaces/send-mail.interface';
 
 @Injectable()
 export class MailService {
@@ -117,6 +119,37 @@ export class MailService {
       template: 'password-reset-successful',
       context: {
         name: this.generateName(user),
+      },
+    });
+  }
+
+  async sendUnrecognizedLogin({
+    user,
+    resolveToken,
+    details,
+  }: {
+    user: User;
+    resolveToken: string;
+    details: {
+      userAgent: IUserAgent;
+      timestamp: number;
+    };
+  }): Promise<void> {
+    const url = new URL(`${this.envService.get('APP_URL')}/api/v1/suspicious-activity/resolve`);
+
+    url.searchParams.append('token', resolveToken);
+
+    await this.sendMailAsync({
+      to: user.email,
+      subject: 'New unrecognized login to your account',
+      template: 'unrecognized-login',
+      context: {
+        name: this.generateName(user),
+        user_agent_device: details.userAgent.device,
+        user_agent_browser: details.userAgent.browser,
+        user_agent_os: details.userAgent.os,
+        resolve_url: url.toString(),
+        datetime: DateTime.fromMillis(details.timestamp).setZone('UTC').toFormat("yyyy-MM-dd HH:mm:ss 'UTC'"),
       },
     });
   }
