@@ -149,7 +149,7 @@ export class MailService {
         user_agent_browser: details.userAgent.browser,
         user_agent_os: details.userAgent.os,
         resolve_url: url.toString(),
-        datetime: DateTime.fromMillis(details.timestamp).setZone('UTC').toFormat("yyyy-MM-dd HH:mm:ss 'UTC'"),
+        datetime: DateTime.fromMillis(details.timestamp).toFormat("yyyy-MM-dd HH:mm:ss 'UTC'"),
       },
     });
   }

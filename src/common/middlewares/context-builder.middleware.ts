@@ -19,7 +19,7 @@ export function contextBuilder(req: IRequest, _res: Response, next: NextFunction
       engine: handleUndefinedString(parsedUserAgent.engine.toString()),
       browser: handleUndefinedString(parsedUserAgent.browser.toString()),
     },
-    timestamp: DateTime.now().toUTC().toMillis(),
+    timestamp: DateTime.now().toMillis(),
   };
 
   next();
