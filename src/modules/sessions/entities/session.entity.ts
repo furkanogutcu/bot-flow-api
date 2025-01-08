@@ -45,16 +45,16 @@ export class Session {
   @Column({ type: 'varchar', nullable: true })
   ip_address?: string | null;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   last_accessed_at?: Date | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   revoked_at?: Date | null;
 
   @BeforeInsert()
