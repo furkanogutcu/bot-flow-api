@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 
+import { ExceptionCode } from '../../common/exceptions/reference/exception-code.reference';
 import { AppUnauthorizedException } from '../../common/exceptions/unauthorized.exception';
 import { IJWTTokenPayload } from '../../common/interfaces/auth.interface';
 import { ENVService } from '../common/env/env.service';
@@ -34,7 +35,14 @@ export class JWTService {
   verifyAccessToken(token: string): IJWTTokenPayload {
     try {
       return this.jwtService.verify(token, { secret: this.envService.get('JWT_SECRET_FOR_ACCESS_TOKEN') });
-    } catch {
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new AppUnauthorizedException({
+          message: 'Access token expired',
+          code: ExceptionCode.TokenExpired,
+        });
+      }
+
       throw new AppUnauthorizedException({ message: 'Invalid access token' });
     }
   }
@@ -42,7 +50,14 @@ export class JWTService {
   verifyRefreshToken(token: string): IJWTTokenPayload {
     try {
       return this.jwtService.verify(token, { secret: this.envService.get('JWT_SECRET_FOR_REFRESH_TOKEN') });
-    } catch {
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new AppUnauthorizedException({
+          message: 'Refresh token expired',
+          code: ExceptionCode.TokenExpired,
+        });
+      }
+
       throw new AppUnauthorizedException({ message: 'Invalid refresh token' });
     }
   }
