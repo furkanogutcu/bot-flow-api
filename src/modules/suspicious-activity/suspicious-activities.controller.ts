@@ -4,7 +4,7 @@ import { Public } from '../../common/decorators/public.decorator';
 import { APIResponseOnlyMessage } from '../../common/responses/types/api-response.type';
 import { SuspiciousActivitiesService } from './suspicious-activities.service';
 
-@Controller('suspicious-activity')
+@Controller('suspicious-activities')
 export class SuspiciousActivitiesController {
   constructor(private readonly suspiciousActivitiesService: SuspiciousActivitiesService) {}
 
