@@ -135,7 +135,7 @@ export class MailService {
       timestamp: number;
     };
   }): Promise<void> {
-    const url = new URL(`${this.envService.get('APP_URL')}/api/v1/suspicious-activity/resolve`);
+    const url = new URL(`${this.envService.get('APP_URL')}/api/v1/suspicious-activities/resolve`);
 
     url.searchParams.append('token', resolveToken);
 
