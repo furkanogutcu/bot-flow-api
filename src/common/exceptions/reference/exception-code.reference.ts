@@ -12,4 +12,5 @@ export enum ExceptionCode {
   InactiveUser = 'inactive_user',
   InvalidToken = 'invalid_token',
   TokenInvalidOrActivityResolved = 'token_invalid_or_activity_resolved',
+  TokenExpired = 'token_expired',
 }
