@@ -17,4 +17,4 @@ export type Pagination = {
   };
 };
 
-export type PaginatedAPIResponse<R = APIResponseValue> = APIResponse<'data', R> & Pagination;
+export type PaginatedAPIResponse<R = APIResponseValue> = APIResponse<'data', R[]> & Pagination;
