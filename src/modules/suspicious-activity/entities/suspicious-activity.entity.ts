@@ -47,9 +47,9 @@ export class SuspiciousActivity {
   @Column({ type: 'varchar', unique: true, nullable: true })
   resolve_token?: string | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   resolved_at?: Date | null;
 }
