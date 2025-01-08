@@ -230,7 +230,7 @@ export class AuthService {
 
       await this.mailService.sendPasswordResetSuccessful(updatedUser);
 
-      await this.sessionsService.revokeAll(updatedUser, { manager });
+      await this.sessionsService.revokeAll(updatedUser.id, { manager });
 
       await this.cacheService.del(cacheKey);
 
@@ -275,7 +275,7 @@ export class AuthService {
   }
 
   async logout(session: IRequest['session']): Promise<APIResponseOnlyMessage> {
-    await this.sessionsService.revoke({ session });
+    await this.sessionsService.revoke(session.id);
 
     return {
       message: 'You have been successfully logged out.',
