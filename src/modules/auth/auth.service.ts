@@ -51,7 +51,16 @@ export class AuthService {
 
     const session = await this.sessionsService.findOne({
       where: { session_key: sessionKey, user: { id: userID } },
-      select: { id: true, session_key: true },
+      select: {
+        id: true,
+        session_key: true,
+        mfa_verified_at: true,
+        user: {
+          id: true,
+          role: true,
+          status: true,
+        },
+      },
       relations: { user: true },
     });
 
@@ -59,7 +68,7 @@ export class AuthService {
       throw new AppUnauthorizedException({ message: 'Session not found' });
     }
 
-    if (session.user.deleted_at || session.user.status !== UserStatus.Active) {
+    if (session.user.status !== UserStatus.Active) {
       throw new AppUnauthorizedException({
         message: 'User not active',
         code: ExceptionCode.InactiveUser,

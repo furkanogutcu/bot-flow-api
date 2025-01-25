@@ -23,5 +23,9 @@ export class CacheKey {
     userPasswordReset: (token: string): string => {
       return this.generateKey([this.scopes.users, 'password-resets', token]);
     },
+
+    userMFA: (userID: string): string => {
+      return this.generateKey([this.scopes.users, 'mfa', userID]);
+    },
   };
 }

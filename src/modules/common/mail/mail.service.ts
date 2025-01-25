@@ -154,6 +154,18 @@ export class MailService {
     });
   }
 
+  async sendMFAChallenge({ user, challenge }: { user: User; challenge: string }): Promise<void> {
+    await this.sendMailAsync({
+      to: user.email,
+      subject: `${challenge} is your security code`,
+      template: 'mfa-challenge',
+      context: {
+        name: this.generateName(user),
+        challenge,
+      },
+    });
+  }
+
   private generateName(user: User): string {
     return user.email.split('@')[0];
   }
