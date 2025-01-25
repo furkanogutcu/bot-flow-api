@@ -23,6 +23,8 @@ export const ENVSchema = z.object({
   JWT_EXPIRES_FOR_ACCESS_TOKEN: z.string().default('10m'),
   JWT_EXPIRES_FOR_REFRESH_TOKEN: z.string().default('7d'),
 
+  MFA_ISSUER: z.string(),
+
   EMAIL_VERIFICATION_TOKEN_DURATION: z.coerce.number().positive().int().multipleOf(60).default(180),
   PASSWORD_RESET_TOKEN_DURATION: z.coerce.number().positive().int().multipleOf(60).default(300),
   ENCRYPTION_KEY: z.string().length(32),

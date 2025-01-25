@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { MFAMethod } from '../../../common/references/mfa.reference';
 import { UserRole } from '../../../common/references/user-role.reference';
 import { UserStatus } from '../../../common/references/user-status.reference';
 import { Session } from '../../sessions/entities/session.entity';
@@ -46,6 +47,19 @@ export class User {
     default: UserRole.Member,
   })
   role: UserRole;
+
+  @Column({ type: 'boolean', default: false })
+  mfa_enabled: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: MFAMethod,
+    nullable: true,
+  })
+  mfa_method?: MFAMethod | null;
+
+  @Column({ type: 'varchar', nullable: true, select: false })
+  mfa_secret?: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;

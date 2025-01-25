@@ -48,6 +48,9 @@ export class Session {
   @Column({ type: 'timestamptz', nullable: true })
   last_accessed_at?: Date | null;
 
+  @Column({ type: 'timestamptz', nullable: true })
+  mfa_verified_at?: Date | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
