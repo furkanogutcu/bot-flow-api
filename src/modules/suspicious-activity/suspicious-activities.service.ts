@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DateTime } from 'luxon';
-import { DeepPartial, EntityManager, IsNull, Not, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, FindOptionsOrder, IsNull, Not, Repository } from 'typeorm';
 
 import { ExceptionCode } from '../../common/exceptions/reference/exception-code.reference';
 import { AppUnprocessableEntityException } from '../../common/exceptions/unprocessable-entity.exception';
 import { IUserAgent } from '../../common/interfaces/express-request.interface';
-import { APIResponseOnlyMessage } from '../../common/responses/types/api-response.type';
+import { APIResponseOnlyMessage, PaginatedAPIResponse } from '../../common/responses/types/api-response.type';
 import { suspiciousActivityConfig } from '../../configs/suspicious-activity.config';
+import { SuspiciousActivityFilterParams } from '../../validations/suspicious-activities.validation';
 import { Session } from '../sessions/entities/session.entity';
 import { SessionsService } from '../sessions/sessions.service';
 import { SuspiciousActivity } from './entities/suspicious-activity.entity';
@@ -62,6 +63,31 @@ export class SuspiciousActivitiesService {
     await repository.save(SuspiciousActivity, activity);
 
     return { message: 'Suspicious activity resolved successfully' };
+  }
+
+  async list({
+    userID,
+    filter,
+    options,
+  }: {
+    userID: string;
+    filter: SuspiciousActivityFilterParams;
+    options?: {
+      skip?: number;
+      take?: number;
+      orderBy?: FindOptionsOrder<SuspiciousActivity>;
+    };
+  }): Promise<PaginatedAPIResponse<SuspiciousActivity>> {
+    return await this.suspiciousActivityRepository.listWithPagination({
+      where: {
+        user: { id: userID },
+        resolved_at: filter?.state ? (filter.state === 'resolved' ? Not(IsNull()) : IsNull()) : undefined,
+      },
+      skip: options?.skip,
+      take: options?.take,
+      order: options?.orderBy || { created_at: 'desc' },
+      withDeleted: true,
+    });
   }
 
   createEntity(entity: DeepPartial<SuspiciousActivity>) {
