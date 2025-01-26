@@ -19,10 +19,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    if (this.envService.get('NODE_ENV') !== 'production') {
-      this.logger.error(exception);
-    }
-
     try {
       if (exception instanceof AppException) {
         return response.status(exception.httpCode).json(exception.toJSON());
