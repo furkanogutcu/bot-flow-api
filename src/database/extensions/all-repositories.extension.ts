@@ -19,7 +19,7 @@ Repository.prototype.listWithPagination = async function (options): Promise<Pagi
         page: options.skip ? Math.floor(options.skip / per_page) + 1 : 1,
         per_page,
         total_items: total,
-        total_pages: Math.ceil(total / per_page),
+        total_pages: Math.ceil(total / per_page) || 0,
       },
     },
     data,
