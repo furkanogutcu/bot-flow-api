@@ -14,6 +14,7 @@ import { ENVService } from '../env/env.service';
           pinoHttp: {
             level: isDevMode ? 'debug' : 'info',
             transport: isDevMode ? { target: 'pino-pretty' } : undefined,
+            redact: isDevMode ? undefined : ['req.headers.authorization', 'req.headers.cookie'],
           },
         };
       },

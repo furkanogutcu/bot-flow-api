@@ -1,7 +1,8 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common';
 import { TypeORMError } from 'typeorm';
 import { ZodError } from 'zod';
 
+import { ENVService } from '../../../modules/common/env/env.service';
 import { AppException } from '../app.exception';
 import { AppInternalException } from '../internal.exception';
 import { NestJSExceptionTransformer } from '../transformers/nestjs.exception-transformer';
@@ -10,9 +11,17 @@ import { AppValidationException } from '../validation.exception';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
+  constructor(private readonly envService: ENVService) {}
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
+
+    if (this.envService.get('NODE_ENV') !== 'production') {
+      this.logger.error(exception);
+    }
 
     try {
       if (exception instanceof AppException) {
