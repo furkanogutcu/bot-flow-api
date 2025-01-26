@@ -35,14 +35,7 @@ export class JWTService {
   verifyAccessToken(token: string): IJWTTokenPayload {
     try {
       return this.jwtService.verify(token, { secret: this.envService.get('JWT_SECRET_FOR_ACCESS_TOKEN') });
-    } catch (error) {
-      if (error instanceof TokenExpiredError) {
-        throw new AppUnauthorizedException({
-          message: 'Access token expired',
-          code: ExceptionCode.TokenExpired,
-        });
-      }
-
+    } catch {
       throw new AppUnauthorizedException({ message: 'Invalid access token' });
     }
   }
