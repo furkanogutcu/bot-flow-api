@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { DateTime } from 'luxon';
-import * as requestIP from 'request-ip';
+import requestIP from 'request-ip';
 import { UAParser } from 'ua-parser-js';
 
 import { IRequest } from '../interfaces/express-request.interface';
