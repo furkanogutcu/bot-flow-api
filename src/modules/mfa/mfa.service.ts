@@ -102,12 +102,6 @@ export class MFAService {
 
     const method = this.getMethod(activeMethod);
 
-    if (!method.sendChallenge) {
-      throw new AppUnprocessableEntityException({
-        message: `${activeMethod.toUpperCase()} method does not support challenge.`,
-      });
-    }
-
     await method.sendChallenge(user);
 
     return { message: 'MFA challenge sent successfully.' };
@@ -138,7 +132,7 @@ export class MFAService {
     return { message: 'MFA disabled successfully.' };
   }
 
-  private getMethod(methodName: MFAMethod): BaseMFAMethod {
+  getMethod(methodName: MFAMethod): BaseMFAMethod {
     const method = this.methods[methodName];
 
     if (!method) {
