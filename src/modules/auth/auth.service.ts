@@ -59,6 +59,7 @@ export class AuthService {
           id: true,
           role: true,
           status: true,
+          mfa_enabled: true,
         },
       },
       relations: { user: true },
@@ -66,13 +67,6 @@ export class AuthService {
 
     if (!session || !session.user) {
       throw new AppUnauthorizedException({ message: 'Session not found' });
-    }
-
-    if (session.user.status !== UserStatus.Active) {
-      throw new AppUnauthorizedException({
-        message: 'User not active',
-        code: ExceptionCode.InactiveUser,
-      });
     }
 
     return session;
