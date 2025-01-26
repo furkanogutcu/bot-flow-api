@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as OTPAuth from 'otpauth';
+import OTPAuth from 'otpauth';
 
 import { MFAMethod, MFASetupResponseType } from '../../../common/references/mfa.reference';
 import { ENVService } from '../../common/env/env.service';
