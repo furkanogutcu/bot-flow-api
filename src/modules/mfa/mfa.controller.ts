@@ -1,11 +1,13 @@
 import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common';
 
+import { SkipMFA } from '../../common/decorators/skip-mfa.decorator';
 import { IRequest } from '../../common/interfaces/express-request.interface';
 import { APIResponseOnlyMessage } from '../../common/responses/types/api-response.type';
 import { SetupMFAPayload, VerifyMFAPayload } from '../../validations/mfa.validation';
 import { IMFASetupResponse } from './interfaces/mfa.interface';
 import { MFAService } from './mfa.service';
 
+@SkipMFA()
 @Controller('auth/mfa')
 export class MfaController {
   constructor(private readonly mfaService: MFAService) {}

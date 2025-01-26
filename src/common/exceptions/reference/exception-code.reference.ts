@@ -14,4 +14,5 @@ export enum ExceptionCode {
   TokenInvalidOrActivityResolved = 'token_invalid_or_activity_resolved',
   TokenExpired = 'token_expired',
   WrongMFACode = 'wrong_mfa_code',
+  MFARequired = 'mfa_required',
 }
