@@ -24,6 +24,7 @@ import { CacheKey } from '../common/cache/cache-key';
 import { ENVService } from '../common/env/env.service';
 import { MailService } from '../common/mail/mail.service';
 import { IDetectUnrecognizedLoginParams } from '../common/queues/workers/interfaces/detect-unrecognized-login.interface';
+import { MFAService } from '../mfa/mfa.service';
 import { Session } from '../sessions/entities/session.entity';
 import { SessionsService } from '../sessions/sessions.service';
 import { User } from '../users/entities/user.entity';
@@ -42,6 +43,7 @@ export class AuthService {
     private readonly sessionsService: SessionsService,
     @InjectQueue(AppQueue.DetectUnrecognizedLogin)
     private readonly detectUnrecognizedLoginQueue: Queue<IDetectUnrecognizedLoginParams>,
+    private readonly mfaService: MFAService,
   ) {}
 
   async verifyAccessToken(accessToken: string): Promise<IRequest['session']> {
@@ -112,6 +114,8 @@ export class AuthService {
         created_at: true,
         updated_at: true,
         deleted_at: true,
+        mfa_enabled: true,
+        mfa_method: true,
       },
     });
 
@@ -123,6 +127,10 @@ export class AuthService {
     }
 
     const { accessToken, refreshToken, session } = await this.createSession({ user, context });
+
+    if (user.mfa_enabled) {
+      await this.sendMFAChallenge(user);
+    }
 
     await this.detectUnrecognizedLoginQueue.add('detect-unrecognized-login', {
       userID: user.id,
@@ -401,5 +409,13 @@ export class AuthService {
     });
 
     return { session, accessToken, refreshToken };
+  }
+
+  private async sendMFAChallenge(user: User) {
+    if (!user.mfa_method) return;
+
+    const method = this.mfaService.getMethod(user.mfa_method);
+
+    await method.sendChallenge(user);
   }
 }

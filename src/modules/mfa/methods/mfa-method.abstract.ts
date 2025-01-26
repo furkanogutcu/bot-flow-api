@@ -29,7 +29,7 @@ export abstract class BaseMFAMethod {
     return await this.onVerify(user, verificationCode, context || undefined);
   }
 
-  async sendChallenge?(user: User): Promise<void>;
+  async sendChallenge(_user: User): Promise<void> {}
 
   protected abstract onVerify(user: User, verificationCode: string, context?: IMFAContext): Promise<boolean>;
 

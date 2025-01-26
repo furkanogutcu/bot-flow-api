@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CacheModule } from '../common/cache/cache.module';
 import { ENVService } from '../common/env/env.service';
 import { MailModule } from '../common/mail/mail.module';
+import { MFAModule } from '../mfa/mfa.module';
 import { SessionsModule } from '../sessions/sessions.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
@@ -27,6 +28,7 @@ import { JWTService } from './jwt.service';
     SessionsModule,
     CacheModule,
     MailModule,
+    MFAModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JWTService],
