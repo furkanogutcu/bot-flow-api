@@ -1,6 +1,6 @@
 import { Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Req } from '@nestjs/common';
 
-import { OrderBy } from '../../common/decorators/order-by.decorator';
+import { OrderBy, OrderByParam } from '../../common/decorators/order-by.decorator';
 import { Pagination } from '../../common/decorators/pagination.decorator';
 import { AppUnprocessableEntityException } from '../../common/exceptions/unprocessable-entity.exception';
 import { IRequest } from '../../common/interfaces/express-request.interface';
@@ -22,7 +22,7 @@ export class SessionsController {
   @Get()
   async listActives(
     @Pagination() { skip, take }: PaginationParams,
-    @OrderBy<Session>(['created_at', 'last_accessed_at']) orderBy: any,
+    @OrderBy<Session>(['created_at', 'last_accessed_at']) orderBy: OrderByParam<Session>,
     @Req() req: IRequest,
   ): Promise<PaginatedAPIResponse<SessionView & { is_current: boolean }>> {
     return await this.sessionsService.listActives(req.session, { skip, take, orderBy });
